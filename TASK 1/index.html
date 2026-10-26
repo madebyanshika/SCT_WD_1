@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern responsive landing page with an interactive navigation menu.">
+    <title>Nova | Modern Landing Page</title>
+
+    <style>
+        /* ---------- 1. Global Styles ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 85px;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #f8fafc;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1120px, 90%);
+            margin: auto;
+        }
+
+        /* ---------- 2. Fixed Navigation Bar ---------- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 22px 0;
+            background: transparent;
+            transition:
+                background 0.35s ease,
+                padding 0.35s ease,
+                box-shadow 0.35s ease;
+        }
+
+        /* JavaScript adds this class after scrolling */
+        .navbar.scrolled {
+            background: #ffffff;
+            padding: 13px 0;
+            box-shadow: 0 5px 25px rgba(15, 23, 42, 0.10);
+        }
+
+        .nav-container {
+            width: min(1200px, 90%);
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .navbar.scrolled .logo {
+            color: #172554;
+        }
+
+        .logo span {
+            color: #a5b4fc;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            position: relative;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+
+        .navbar.scrolled .nav-links a {
+            color: #334155;
+        }
+
+        /* Animated underline on hover */
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 2px;
+            width: 0;
+            background: #818cf8;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .navbar.scrolled .nav-links a:hover {
+            color: #818cf8;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a:focus-visible::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 10px 19px !important;
+            border-radius: 25px;
+            background: #6366f1;
+            color: #ffffff !important;
+        }
+
+        .nav-cta::after {
+            display: none;
+        }
+
+        .nav-cta:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        /* Hamburger button: hidden on larger screens */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: #ffffff;
+        }
+
+        .navbar.scrolled .menu-toggle {
+            color: #172554;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            margin: 5px 0;
+            background: currentColor;
+            border-radius: 5px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Hamburger transforms into an X when opened */
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* ---------- 3. Hero Section ---------- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+            background:
+                radial-gradient(ellipse at 80% 20%,
+                    rgba(129, 140, 248, 0.35), transparent 40%),
+                linear-gradient(135deg, #0f172a, #312e81 65%, #4338ca);
+        }
+
+        .hero-content {
+            padding: 140px 0 90px;
+            max-width: 760px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            color: #c7d2fe;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 30px;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.7rem, 6vw, 5.2rem);
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            color: #a5b4fc;
+        }
+
+        .hero p {
+            max-width: 620px;
+            font-size: 1.1rem;
+            color: #dbeafe;
+            margin-bottom: 35px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 25px;
+            border-radius: 8px;
+            background: #818cf8;
+            color: #ffffff;
+            font-weight: 700;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #6366f1;
+            transform: translateY(-3px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-left: 12px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* ---------- 4. Common Section Styles ---------- */
+        section:not(.hero) {
+            padding: 100px 0;
+            scroll-margin-top: 65px;
+        }
+
+        .section-label {
+            color: #6366f1;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: #172554;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .section-description {
+            max-width: 700px;
+            color: #64748b;
+            font-size: 1.05rem;
+        }
+
+        /* ---------- 5. About Section ---------- */
+        .about {
+            background: #ffffff;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .about-visual {
+            min-height: 340px;
+            display: grid;
+            place-items: center;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: #3730a3;
+            font-size: 6rem;
+            font-weight: 800;
+        }
+
+        .about-text p {
+            color: #64748b;
+            margin-bottom: 18px;
+        }
+
+        /* ---------- 6. Services Section ---------- */
+        .services {
+            background: #f1f5f9;
+        }
+
+        .section-heading {
+            margin-bottom: 45px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .service-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+        }
+
+        .service-icon {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            background: #eef2ff;
+            border-radius: 12px;
+            color: #4f46e5;
+            font-size: 1.7rem;
+            margin-bottom: 22px;
+        }
+
+        .service-card h3 {
+            color: #172554;
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            color: #64748b;
+        }
+
+        /* Extra content for testing the scroll effect */
+        .extra-content {
+            background: #ffffff;
+        }
+
+        .extra-content .section-description {
+            margin-bottom: 25px;
+        }
+
+        /* ---------- 7. Contact Section ---------- */
+        .contact {
+            background: #eef2ff;
+        }
+
+        .contact-card {
+            max-width: 750px;
+            margin: 35px auto 0;
+            padding: 35px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
+        }
+
+        .contact-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .contact-card input,
+        .contact-card textarea {
+            width: 100%;
+            padding: 13px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        .contact-card input:focus,
+        .contact-card textarea:focus {
+            outline: 2px solid #818cf8;
+            border-color: #6366f1;
+        }
+
+        .contact-card textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .contact-card button {
+            border: none;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        /* ---------- 8. Footer ---------- */
+        footer {
+            padding: 30px 0;
+            text-align: center;
+            color: #cbd5e1;
+            background: #0f172a;
+        }
+
+        /* ---------- 9. Tablet and Mobile Responsive Design ---------- */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 16px 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            /* Hidden by default on mobile */
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                padding: 0 5%;
+                background: #ffffff;
+                box-shadow: 0 12px 20px rgba(15, 23, 42, 0.10);
+
+                max-height: 0;
+                overflow: hidden;
+                visibility: hidden;
+                opacity: 0;
+
+                transition:
+                    max-height 0.35s ease,
+                    opacity 0.25s ease,
+                    padding 0.35s ease,
+                    visibility 0.35s ease;
+            }
+
+            .nav-links.open {
+                max-height: 400px;
+                padding: 12px 5% 22px;
+                visibility: visible;
+                opacity: 1;
+            }
+
+            /* Mobile menu links use dark text */
+            .nav-links a,
+            .navbar .nav-links a {
+                display: block;
+                color: #334155;
+                padding: 13px 0;
+            }
+
+            .nav-links a::after {
+                bottom: 5px;
+            }
+
+            .nav-cta {
+                text-align: center;
+                margin-top: 8px;
+            }
+
+            .hero-content {
+                padding-top: 130px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .about-visual {
+                min-height: 250px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section:not(.hero) {
+                padding: 75px 0;
+            }
+
+            .btn-outline {
+                margin: 12px 0 0;
+            }
+
+            .contact-card {
+                padding: 25px;
+            }
+        }
+
+        /* Respect users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation: fixed at the top of the viewport -->
+    <header class="navbar" id="navbar">
+        <nav class="nav-container container" aria-label="Main navigation">
+
+            <a href="#home" class="logo" aria-label="Nova home">
+                nova<span>.</span>
+            </a>
+
+            <!-- Hamburger toggle for mobile devices -->
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="navLinks">
+
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#contact" class="nav-cta">Get Started</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content">
+
+                    <span class="eyebrow">
+                        ✦ Ideas into reality
+                    </span>
+
+                    <h1>
+                        Build something <span>amazing.</span>
+                    </h1>
+
+                    <p>
+                        We create thoughtful digital experiences that
+                        help businesses grow, connect with people, and
+                        turn bold ideas into meaningful results.
+                    </p>
+
+                    <a href="#services" class="btn">
+                        Explore Services →
+                    </a>
+
+                    <a href="#about" class="btn btn-outline">
+                        Learn More
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="container about-grid">
+
+                <div class="about-visual" aria-label="Nova brand illustration">
+                    N.
+                </div>
+
+                <div class="about-text">
+                    <p class="section-label">Who we are</p>
+
+                    <h2 class="section-title">
+                        Design with purpose. Build with passion.
+                    </h2>
+
+                    <p>
+                        Nova is a creative digital studio focused on
+                        building clean, accessible, and user-friendly
+                        digital products.
+                    </p>
+
+                    <p>
+                        We believe that great design is more than
+                        appearance. It combines usability, performance,
+                        and creativity to solve real-world problems.
+                    </p>
+
+                    <p>
+                        Our approach puts people first, keeps things
+                        simple, and makes every interaction count.
+                    </p>
+
+                    <a href="#contact" class="btn">
+                        Work With Us
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="services" id="services">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="section-label">What we do</p>
+
+                    <h2 class="section-title">
+                        Services that make a difference.
+                    </h2>
+
+                    <p class="section-description">
+                        From the first idea to the final product,
+                        we help you build digital experiences that
+                        look great and work smoothly.
+                    </p>
+                </div>
+
+                <div class="services-grid">
+
+                    <article class="service-card">
+                        <div class="service-icon" aria-hidden="true">
+                            ◈
+                        </div>
+                        <h3>Web Design</h3>
+                        <p>
+                            Clean and modern interfaces designed
+                            around your audience, brand, and goals.
+                        </p>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="service-icon" aria-hidden="true">
+                            &lt;/&gt;
+                        </div>
+                        <h3>Web Development</h3>
+                        <p>
+                            Responsive, fast, and accessible websites
+                            built with modern development practices.
+                        </p>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="service-icon" aria-hidden="true">
+                            ✧
+                        </div>
+                        <h3>Digital Strategy</h3>
+                        <p>
+                            Practical ideas and digital solutions
+                            that help your business reach its goals.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Extra section to provide more scrolling space -->
+        <section class="extra-content">
+            <div class="container">
+
+                <p class="section-label">Our approach</p>
+
+                <h2 class="section-title">
+                    Better experiences start with simple ideas.
+                </h2>
+
+                <p class="section-description">
+                    We focus on understanding your needs, planning
+                    carefully, designing thoughtfully, and building
+                    solutions that are easy to use.
+                </p>
+
+                <p class="section-description">
+                    Every project is an opportunity to learn,
+                    experiment, and create something useful.
+                    We value clear communication, collaboration,
+                    continuous improvement, and attention to detail.
+                </p>
+
+                <p class="section-description">
+                    Scroll up and down this page to see the navigation
+                    bar change its background, padding, and shadow.
+                    Try hovering over the navigation links, too.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="section-label">Get in touch</p>
+
+                    <h2 class="section-title">
+                        Have an idea? Let's talk.
+                    </h2>
+
+                    <p class="section-description">
+                        Tell us a little about your project.
+                        This sample form is ready for you to connect
+                        to a backend or form service.
+                    </p>
+                </div>
+
+                <form class="contact-card" id="contactForm">
+
+                    <label for="name">Your Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        autocomplete="name"
+                        required>
+
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required>
+
+                    <label for="message">Your Message</label>
+                    <textarea
+                        id="message"
+                        name="message"
+                        placeholder="Tell us about your idea..."
+                        required></textarea>
+
+                    <button type="submit" class="btn">
+                        Send Message →
+                    </button>
+
+                    <p id="formMessage" role="status"
+                       aria-live="polite"></p>
+                </form>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Nova. Built with HTML, CSS & JavaScript.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ---------- 1. Select the navigation elements ----------
+        const navbar = document.getElementById("navbar");
+        const menuToggle = document.getElementById("menuToggle");
+        const navLinks = document.getElementById("navLinks");
+
+        // ---------- 2. Change navbar style when scrolling ----------
+        function updateNavbar() {
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        }
+
+        // Run on scroll and once on page load.
+        window.addEventListener("scroll", updateNavbar, {
+            passive: true
+        });
+
+        updateNavbar();
+
+        // ---------- 3. Toggle the mobile hamburger menu ----------
+        function closeMenu() {
+            navLinks.classList.remove("open");
+            menuToggle.classList.remove("active");
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.setAttribute(
+                "aria-label",
+                "Open navigation menu"
+            );
+        }
+
+        menuToggle.addEventListener("click", function () {
+            const isOpen = navLinks.classList.toggle("open");
+
+            menuToggle.classList.toggle("active", isOpen);
+            menuToggle.setAttribute("aria-expanded", String(isOpen));
+            menuToggle.setAttribute(
+                "aria-label",
+                isOpen
+                    ? "Close navigation menu"
+                    : "Open navigation menu"
+            );
+        });
+
+        // Close the menu after clicking any navigation link.
+        navLinks.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", closeMenu);
+        });
+
+        // Close the mobile menu when clicking outside the navbar.
+        document.addEventListener("click", function (event) {
+            if (
+                !navbar.contains(event.target) &&
+                navLinks.classList.contains("open")
+            ) {
+                closeMenu();
+            }
+        });
+
+        // Close the menu with the Escape key.
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeMenu();
+                menuToggle.focus();
+            }
+        });
+
+        // Reset mobile navigation when resizing to desktop.
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
+
+        // ---------- 4. Demo contact form ----------
+        // This demonstrates the interface only. No message is sent.
+        const contactForm = document.getElementById("contactForm");
+        const formMessage = document.getElementById("formMessage");
+
+        contactForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            formMessage.textContent =
+                "Thanks! This demo form works on the page, " +
+                "but you need a backend to send real messages.";
+
+            formMessage.style.color = "#4338ca";
+            formMessage.style.marginTop = "15px";
+
+            contactForm.reset();
+        });
+    </script>
+
+</body>
+</html>
